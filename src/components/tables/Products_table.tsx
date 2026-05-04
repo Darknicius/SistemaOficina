@@ -4,14 +4,14 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from "../../ui/table";
+} from "../ui/table";
 
 import {
   TrashBinIcon,
   PencilIcon,
-} from "../../../icons"; 
+} from "../../icons"; 
 
-import Badge from "../../ui/badge/Badge";
+import Badge from "../ui/badge/Badge";
 
 interface product {
   id: number;

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import ComponentCard from "../../components/common/ComponentCard";
 import PageMeta from "../../components/common/PageMeta";
-import TabelaProdutos from "../../components/tables/BasicTables/Clientes_table";
+import TabelaProdutos from "../../components/tables/Clientes_table";
 import Button from "../../components/ui/button/Button";
 
 export default function ClientesList() {
