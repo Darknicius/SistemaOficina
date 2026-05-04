@@ -4,12 +4,12 @@ import {
   TableCell,
   TableHeader,
   TableRow,
-} from "../../ui/table";
+} from "../ui/table";
 
 import {
   TrashBinIcon,
   PencilIcon,
-} from "../../../icons";
+} from "../../icons";
 
 interface client {
   id: number;
