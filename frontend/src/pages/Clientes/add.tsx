@@ -6,7 +6,7 @@ import Input from "../../components/form/input/InputField";
 import Button from "../../components/ui/button/Button";
 import ComponentCard from "../../components/common/ComponentCard";
 import Label from "../../components/form/Label";
-import { SearchIcon } from "../../icons";
+import { SearchIcon, HourglassIcon } from "../../icons";
 import { formatCep, formatTelefone, formatCelular } from "../../utils/masks";
 import { useCep } from "../../hooks/useCep";
 import { Cliente } from "../../types/cliente";
@@ -94,7 +94,7 @@ export default function ClientesAdd() {
             <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-6">
                     <ComponentCard title="Cadastro de clientes">
-                        
+
                         {/* Formulário de cadastro de clientes */}
                         <form onSubmit={handleSubmit} className="space-y-6">
 
@@ -146,18 +146,20 @@ export default function ClientesAdd() {
                                             value={formData.cep}
                                             onChange={handleCepInput}
                                         />
-                                        <button
+                                        <Button
                                             type="button"
-                                            className="w-10 h-10 flex items-center justify-center rounded-lg bg-brand-500 hover:bg-brand-600 transition-colors"
+                                            variant="primary"
+                                            iconOnly
+                                            className="w-10 h-10"
                                             onClick={handleBuscarCep}
                                             disabled={loading}
                                         >
                                             {loading ? (
-                                                <span className="animate-spin">⏳</span>
+                                                <HourglassIcon className="w-5 h-5 animate-spin" />
                                             ) : (
                                                 <SearchIcon className="w-5 h-5" />
                                             )}
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                                 <div>

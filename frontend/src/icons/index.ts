@@ -55,6 +55,7 @@ import { ReactComponent as MoreDotIcon } from "./moredot.svg?react";
 import { ReactComponent as AlertHexaIcon } from "./alert-hexa.svg?react";
 import { ReactComponent as ErrorHexaIcon } from "./info-hexa.svg?react";
 import { ReactComponent as SearchIcon } from "./search.svg?react";
+import { ReactComponent as HourglassIcon } from "./hourglass.svg?react";
 
 export {
   ErrorHexaIcon,
@@ -114,4 +115,5 @@ export {
   AngleLeftIcon,
   AngleRightIcon,
   SearchIcon,
+  HourglassIcon,
 };
