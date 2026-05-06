@@ -27,7 +27,7 @@ def insert_client(data: dict) -> int | None:
         data["estado"],
         data["endereco"],
         data["bairro"],
-        data.get["numero"],
+        data.get("numero"),
         data.get("complemento"),
         True,
         agora,

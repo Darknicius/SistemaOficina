@@ -16,14 +16,12 @@ def add_client():
     logger.info(f"POST /clientes/adicionar retornou {status_code} com a mensagem: {response}")
     return jsonify(response), status_code
 
-
 @client_bp.route("/clientes", methods=["GET"])
 def find_client_by_cpf():
     cpf = request.args.get("cpf")
     response, status_code = get_client_by_cpf(cpf)
     logger.info(f"GET /clientes retornou {status_code} com a mensagem: {response}")
     return jsonify(response), status_code
-
 
 @client_bp.route("/clientes/all", methods=["GET"])
 def list_all_clients():

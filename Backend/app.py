@@ -2,7 +2,6 @@ from flask import Flask
 from logs.logger import setup_logger
 from flask_cors import CORS
 
-
 from controller.client_controller import client_bp
 from database.connection import init_db
 
