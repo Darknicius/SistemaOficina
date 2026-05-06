@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { ClienteAPI } from "../types/cliente";
+import { Cliente, ClienteAPI } from "../types/cliente";
 
 const API_URL = "http://localhost:5000";
 
@@ -40,9 +40,30 @@ export const useClientes = () => {
     [fetchClientes]
   );
 
+  const createCliente = useCallback(
+    async (cliente: Cliente): Promise<boolean> => {
+      try {
+        const res = await fetch(`${API_URL}/clientes/adicionar`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(cliente),
+        });
+        if (!res.ok) throw new Error("Erro ao criar cliente");
+        await fetchClientes();
+        return true;
+      } catch (err: any) {
+        setError(err.message ?? "Erro ao criar");
+        return false;
+      }
+    },
+    [fetchClientes]
+  );
+
   useEffect(() => {
     fetchClientes();
   }, [fetchClientes]);
 
-  return { clientes, loading, error, fetchClientes, deleteCliente };
+  return { clientes, loading, error, fetchClientes, deleteCliente, createCliente };
 };
