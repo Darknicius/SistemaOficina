@@ -8,10 +8,12 @@ import ComponentCard from "../../components/common/ComponentCard";
 import Label from "../../components/form/Label";
 import { SearchIcon, HourglassIcon } from "../../icons";
 import { formatCep, formatTelefone, formatCelular } from "../../utils/masks";
+import { useClientes } from "../../hooks/useClientes";
 import { useCep } from "../../hooks/useCep";
 import { Cliente } from "../../types/cliente";
 
 export default function ClientesAdd() {
+    const { createCliente, error } = useClientes();
     const navigate = useNavigate();
     const { getCep, loading } = useCep();
 
@@ -66,23 +68,20 @@ export default function ClientesAdd() {
     }
 
     // Envio do formulário para a API
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-
         try {
-            const response = await fetch("http://localhost:5000/api/clientes", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(formData),
-            });
+            const res = await createCliente(formData);
 
-            const data = await response.json();
-            console.log(data);
-            navigate("/clientes");
+            if (res) {
+                alert("Cliente cadastrado com sucesso!");
+                navigate("/clientes");
+            }
+
         } catch (error) {
-            console.error("Erro ao enviar:", error);
+            console.error("Erro ao ao criar cliente:", error);
         }
-    }
+    };
 
     return (
         <div>
@@ -100,7 +99,7 @@ export default function ClientesAdd() {
 
                             {/* DADOS PESSOAIS */}
                             <div>
-                                <Label>Nome</Label>
+                                <Label>Nome *</Label>
                                 <Input
                                     type="text"
                                     name="nome"
@@ -113,7 +112,7 @@ export default function ClientesAdd() {
                             {/* CONTATO */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
-                                    <Label>Celular</Label>
+                                    <Label>Celular *</Label>
                                     <Input
                                         type="text"
                                         name="celular"
@@ -239,7 +238,11 @@ export default function ClientesAdd() {
                                 >
                                     Cancelar
                                 </Button>
-                                <Button size="sm" variant="primary" type="submit">
+                                <Button
+                                    size="sm"
+                                    variant="primary"
+                                    type="submit"
+                                >
                                     Cadastrar Cliente
                                 </Button>
                             </div>
