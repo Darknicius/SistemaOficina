@@ -1,14 +1,14 @@
 export interface Cliente {
     nome: string,
     celular: string,
-    telefone: string | null,
+    telefone: string | undefined,
     cep: string,
     cidade: string,
     estado: string,
     endereco: string,
     bairro: string,
-    numero: string | null,
-    complemento: string | null,
+    numero: string | undefined,
+    complemento: string | undefined,
 };
 
 export interface ClienteAPI extends Cliente {
