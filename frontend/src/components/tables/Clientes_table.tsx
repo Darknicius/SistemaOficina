@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
 import {
   Table,
   TableBody,
@@ -5,124 +7,207 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
-
-import {
-  TrashBinIcon,
-  PencilIcon,
-} from "../../icons";
-
-interface client {
-  id: number;
-  nome: string;
-  telefone: string;
-  celular: string;
-}
-
-// Define the table data using the interface
-const tableData: client[] = [
-  {
-    id: 1,
-    nome: "João Silva",
-    telefone: "(11) 98765-4321",
-    celular: "(11) 91234-5678",
-  },
-];
+import { TrashBinIcon, PencilIcon } from "../../icons";
+import { useClientes } from "../../hooks/useClientes";
+import { ClienteAPI } from "../../types/cliente";
+import { Modal } from "../ui/modal";
+import Button from "../ui/button/Button";
 
 export default function TabelaClientes() {
-  return (
-    <div className="overflow-hidden rounded-xl bclient bclient-gray-200 bg-white dark:bclient-white/[0.05] dark:bg-white/[0.03] border border-gray-200 dark:border-gray-600">
-      <div className="max-w-full overflow-x-auto">
-        <Table>
-          {/* Table Header */}
-          <TableHeader className="bclient-b bclient-gray-200 dark:bclient-white/[0.05]">
-            <TableRow className="divide-x divide-gray-200 dark:divide-gray-600">
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
-              >
-                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                  ID
-                </span>
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
-              >
-                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                  Nome
-                </span>
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
-              >
-                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                  Telefone
-                </span>
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
-              >
-                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                  Celular
-                </span>
-              </TableCell>
-              <TableCell
-                isHeader
-                className="py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
-              >
-                <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                  Ações
-                </span>
-              </TableCell>
-            </TableRow>
-          </TableHeader>
+  const navigate = useNavigate();
+  const { clientes, loading, error, deleteCliente } = useClientes();
 
-          {/* Table Body */}
-          <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {tableData.map((client) => (
-              <TableRow
-                key={client.id}
-                className="divide-x divide-gray-200 dark:divide-gray-700"
-              >
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedCliente, setSelectedCliente] = useState<ClienteAPI | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
-                {/* ID */}
-                <TableCell className="py-4 text-gray-500 text-center text-theme-sm dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
-                  {client.id}
-                </TableCell>
+  function handleDeleteClick(cliente: ClienteAPI) {
+    setSelectedCliente(cliente);
+    setConfirmOpen(true);
+  }
 
-                {/* Nome */}
-                <TableCell className="py-4 text-gray-500 text-center text-theme-sm dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
-                  {client.nome}
-                </TableCell>
+  async function handleConfirmDelete() {
+    if (!selectedCliente) return;
+    setDeleting(true);
+    await deleteCliente(selectedCliente.id);
+    setDeleting(false);
+    setConfirmOpen(false);
+    setSelectedCliente(null);
+  }
 
-                {/* Telefone */}
-                <TableCell className="py-4 text-gray-500 text-center text-theme-sm dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
-                  {client.telefone}
-                </TableCell>
-
-                {/* Celular */}
-                <TableCell className="py-4 text-gray-500 text-center text-theme-sm dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
-                  {client.celular}
-                </TableCell>
-
-                <TableCell className="py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
-                  <div className="flex items-center justify-center gap-3">
-                    <button className="p-2 rounded-lg text-blue-500 hover:bg-brand-400 hover:text-blue-600 transition-colors duration-200">
-                      <PencilIcon />
-                    </button>
-                    <button className="p-2 rounded-lg text-red-500 hover:bg-brand-400 hover:text-red-600 transition-colors duration-200">
-                      <TrashBinIcon />
-                    </button>
-                  </div>
-                </TableCell>
-
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+  /* ── estados de carregamento / erro ── */
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-12 text-gray-500 dark:text-gray-400">
+        <svg
+          className="animate-spin mr-3 h-5 w-5 text-brand-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v8H4z"
+          />
+        </svg>
+        Carregando clientes...
       </div>
-    </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center py-12 text-error-500">
+        <span className="text-sm font-medium">Erro: {error}</span>
+      </div>
+    );
+  }
+
+  if (clientes.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12 text-gray-400 dark:text-gray-500 text-sm">
+        Nenhum cliente cadastrado ainda.
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-gray-600 dark:bg-white/[0.03]">
+        <div className="max-w-full overflow-x-auto">
+          <Table>
+            {/* Cabeçalho */}
+            <TableHeader className="border-b border-gray-200 dark:border-gray-600">
+              <TableRow className="divide-x divide-gray-200 dark:divide-gray-600">
+                {["ID", "Nome", "Celular", "Telefone", "Cidade / UF", "Ações"].map(
+                  (col) => (
+                    <TableCell
+                      key={col}
+                      isHeader
+                      className="py-3 text-center font-medium text-gray-800 text-theme-sm dark:text-white/90"
+                    >
+                      {col}
+                    </TableCell>
+                  )
+                )}
+              </TableRow>
+            </TableHeader>
+
+            {/* Corpo */}
+            <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {clientes.map((cliente) => (
+                <TableRow
+                  key={cliente.id}
+                  className="divide-x divide-gray-200 dark:divide-gray-700"
+                >
+                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                    {cliente.id}
+                  </TableCell>
+
+                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                    {cliente.nome}
+                  </TableCell>
+
+                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                    {formatarTelefone(cliente.celular, true)}
+                  </TableCell>
+
+                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                    {cliente.telefone
+                      ? formatarTelefone(cliente.telefone, false)
+                      : <span className="text-gray-300 dark:text-gray-600">—</span>}
+                  </TableCell>
+
+                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                    {cliente.cidade} / {cliente.estado}
+                  </TableCell>
+
+                  <TableCell className="py-3 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center justify-center gap-3">
+                      <button
+                        onClick={() =>
+                          navigate(`/clientes/edit/${cliente.id}`)
+                        }
+                        className="p-2 rounded-lg text-blue-500 hover:bg-brand-50 hover:text-blue-600 transition-colors duration-200"
+                        title="Editar"
+                      >
+                        <PencilIcon />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteClick(cliente)}
+                        className="p-2 rounded-lg text-red-500 hover:bg-error-50 hover:text-red-600 transition-colors duration-200"
+                        title="Excluir"
+                      >
+                        <TrashBinIcon />
+                      </button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+
+      {/* Modal de confirmação de exclusão */}
+      <Modal
+        isOpen={confirmOpen}
+        onClose={() => setConfirmOpen(false)}
+        className="max-w-[420px] p-6"
+      >
+        <div className="flex flex-col gap-4">
+          <h4 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+            Confirmar exclusão
+          </h4>
+          <p className="text-sm text-gray-500 dark:text-gray-400">
+            Deseja realmente excluir o cliente{" "}
+            <span className="font-medium text-gray-800 dark:text-white/90">
+              {selectedCliente?.nome}
+            </span>
+            ? Esta ação não pode ser desfeita.
+          </p>
+          <div className="flex justify-end gap-3 mt-2">
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => setConfirmOpen(false)}
+              disabled={deleting}
+            >
+              Cancelar
+            </Button>
+            <Button
+              size="sm"
+              variant="primary"
+              onClick={handleConfirmDelete}
+              disabled={deleting}
+              className="bg-error-500 hover:bg-error-600 disabled:bg-error-300"
+            >
+              {deleting ? "Excluindo..." : "Excluir"}
+            </Button>
+          </div>
+        </div>
+      </Modal>
+    </>
   );
+}
+
+/* ── helpers ── */
+function formatarTelefone(numero: string, isCelular: boolean): string {
+  const n = numero.replace(/\D/g, "");
+  if (isCelular && n.length === 11) {
+    return `(${n.slice(0, 2)}) ${n.slice(2, 7)}-${n.slice(7)}`;
+  }
+  if (!isCelular && n.length === 10) {
+    return `(${n.slice(0, 2)}) ${n.slice(2, 6)}-${n.slice(6)}`;
+  }
+  return numero;
 }
