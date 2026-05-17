@@ -94,33 +94,19 @@ def update_client(client_id: int, data: dict) -> bool:
             conn.close()
 
 
-def get_client_by_cpf(cpf: str) -> dict | None:
-    """Busca um cliente pelo CPF. Retorna dict ou None."""
-    sql = "SELECT * FROM clientes WHERE cpf = ? LIMIT 1"
-
-    conn = None
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-        cursor.execute(sql, (cpf,))
-        row = cursor.fetchone()
-        return dict(row) if row else None
-    except sqlite3.Error:
-        return None
-    finally:
-        if conn:
-            conn.close()
-
-
-def get_all_clients() -> list[dict]:
+def get_all_clients(search=None) -> list[dict]:
     """Retorna todos os clientes ativos (ativo = 1)."""
     sql = "SELECT * FROM clientes WHERE ativo = 1"
 
+    if search:
+        sql += " AND nome LIKE ?"
+        search = f"{search}%"
+
     conn = None
     try:
         conn = get_connection()
         cursor = conn.cursor()
-        cursor.execute(sql)
+        cursor.execute(sql, (search,) if search else ())
         rows = cursor.fetchall()
         return [dict(row) for row in rows]
     except sqlite3.Error:

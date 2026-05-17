@@ -1,19 +1,19 @@
 export interface Cliente {
     nome: string,
     celular: string,
-    telefone: string | undefined,
+    telefone?: string,
     cep: string,
     cidade: string,
     estado: string,
     endereco: string,
     bairro: string,
-    numero: string | undefined,
-    complemento: string | undefined,
+    numero?: string,
+    complemento?: string,
 };
 
 export interface ClienteAPI extends Cliente {
   id: number;
-  ativo: boolean;
+  status: boolean;
   created_at: string;
   updated_at: string;
 }

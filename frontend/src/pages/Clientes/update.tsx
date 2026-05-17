@@ -1,5 +1,5 @@
-import { useState, ChangeEvent, FormEvent } from "react";
-import { useNavigate } from "react-router";
+import { useState, ChangeEvent, FormEvent, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 import PageMeta from "../../components/common/PageMeta";
 import Input from "../../components/form/input/InputField";
@@ -10,15 +10,19 @@ import { SearchIcon, HourglassIcon } from "../../icons";
 import { formatCep, formatTelefone, formatCelular } from "../../utils/masks";
 import { useClientes } from "../../hooks/useClientes";
 import { useCep } from "../../hooks/useCep";
-import { Cliente } from "../../types/cliente";
+import { ClienteAPI } from "../../types/cliente";
 
-export default function ClientesAdd() {
-    const { createCliente } = useClientes();
+export default function ClientesUpdate() {
+    const { updateCliente, getClienteById } = useClientes();
     const navigate = useNavigate();
     const { getCep, loading } = useCep();
 
+    const { id } = useParams<{ id: string }>();
+
+
     // Estado para armazenar os dados do formulário
-    const [formData, setFormData] = useState<Cliente>({
+    const [formData, setFormData] = useState<ClienteAPI>({
+        id: 0,
         nome: "",
         celular: "",
         telefone: "",
@@ -29,7 +33,28 @@ export default function ClientesAdd() {
         bairro: "",
         numero: "",
         complemento: "",
+        status: true,
+        created_at: "",
+        updated_at: "",
     });
+
+    const loadCliente = useCallback(async () => {
+        if (!id) return;
+
+        try {
+            const cliente = await getClienteById(Number(id));
+
+            if (cliente) {
+                setFormData(cliente);
+            }
+        } catch (error) {
+            console.error("Erro ao carregar cliente:", error);
+        }
+    }, [id, getClienteById]);
+
+    useEffect(() => {
+        loadCliente();
+    }, [loadCliente]);
 
     // Handler para campos sem máscara
     function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -71,15 +96,15 @@ export default function ClientesAdd() {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         try {
-            const res = await createCliente(formData);
+            const res = await updateCliente(formData);
 
             if (res) {
-                alert("Cliente cadastrado com sucesso!");
+                alert("Cliente atualizado com sucesso!");
                 navigate("/clientes");
             }
 
         } catch (error) {
-            console.error("Erro ao ao criar cliente:", error);
+            console.error("Erro ao atualizar cliente:", error);
         }
     };
 

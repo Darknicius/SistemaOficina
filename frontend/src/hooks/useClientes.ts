@@ -8,13 +8,23 @@ export const useClientes = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchClientes = useCallback(async () => {
+  const fetchClientes = useCallback(async (search = "") => {
     setLoading(true);
     setError(null);
+
     try {
-      const res = await fetch(`${API_URL}/clientes/all`);
-      if (!res.ok) throw new Error("Erro ao buscar clientes");
+      const query = search.trim();
+
+      const res = await fetch(
+        `${API_URL}/clientes?search=${encodeURIComponent(query)}`
+      );
+
+      if (!res.ok) {
+        throw new Error("Erro ao buscar clientes");
+      }
+
       const data = await res.json();
+
       setClientes(data.clientes ?? []);
     } catch (err: any) {
       setError(err.message ?? "Erro desconhecido");
@@ -22,6 +32,19 @@ export const useClientes = () => {
       setLoading(false);
     }
   }, []);
+
+  const getClienteById = useCallback(
+    async (id: number): Promise<ClienteAPI> => {
+      const res = await fetch(`${API_URL}/clientes/${id}`);
+
+      if (!res.ok) {
+        throw new Error("Erro ao buscar cliente");
+      }
+
+      return await res.json();
+    },
+    []
+  );
 
   const deleteCliente = useCallback(
     async (id: number): Promise<boolean> => {
@@ -61,9 +84,30 @@ export const useClientes = () => {
     [fetchClientes]
   );
 
+  const updateCliente = useCallback(
+    async (cliente: ClienteAPI): Promise<boolean> => {
+      try {
+        const res = await fetch(`${API_URL}/clientes/${cliente.id}`, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(cliente),
+        });
+        if (!res.ok) throw new Error("Erro ao atualizar cliente");
+        await fetchClientes();
+        return true;
+      } catch (err: any) {
+        setError(err.message ?? "Erro ao atualizar");
+        return false;
+      }
+    },
+    [fetchClientes]
+  );
+
   useEffect(() => {
     fetchClientes();
   }, [fetchClientes]);
 
-  return { clientes, loading, error, fetchClientes, deleteCliente, createCliente };
+  return { clientes, loading, error, fetchClientes, getClienteById, deleteCliente, createCliente, updateCliente };
 };

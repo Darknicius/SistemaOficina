@@ -2,7 +2,6 @@ import re
 from models.client_model import (
     get_client_by_cellphone,
     insert_client,
-    get_client_by_cpf as model_get_client_by_cpf,
     get_all_clients as model_get_all_clients,
     get_client_by_id as model_get_client_by_id,
     update_client as model_update_client,
@@ -95,17 +94,12 @@ def create_client(data: dict) -> tuple[dict, int]:
     return {"mensagem": "cliente criado com sucesso"}, 201
 
 
-def get_client_by_cpf(cpf: str) -> tuple[dict, int]:
-    """Busca um cliente pelo CPF."""
-    if not cpf or not cpf.strip():
-        return {"erro": "cpf inválido"}, 400
+def get_client_by_id(client_id):
+    """Busca um cliente pelo ID."""
+    if not client_id:
+        return {"erro": "id inválido"}, 400
 
-    cpf_normalizado = re.sub(r"\D", "", cpf)
-
-    if not cpf_normalizado:
-        return {"erro": "cpf inválido"}, 400
-
-    cliente = model_get_client_by_cpf(cpf_normalizado)
+    cliente = model_get_client_by_id(client_id)
 
     if not cliente:
         return {"erro": "cliente não encontrado"}, 404
@@ -113,9 +107,11 @@ def get_client_by_cpf(cpf: str) -> tuple[dict, int]:
     return cliente, 200
 
 
-def get_all_clients() -> tuple[dict, int]:
+def get_all_clients(search=None) -> tuple[dict, int]:
     """Retorna todos os clientes ativos."""
-    clientes = model_get_all_clients()
+    
+    clientes = model_get_all_clients(search)
+
     return {"clientes": clientes}, 200
 
 

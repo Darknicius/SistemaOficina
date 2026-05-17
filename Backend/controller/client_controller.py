@@ -1,7 +1,7 @@
 import logging
 
 from flask import Blueprint, request, jsonify
-from service.client_service import create_client, get_client_by_cpf, get_all_clients, update_client, delete_client
+from service.client_service import create_client, get_client_by_id, get_all_clients, update_client, delete_client
 from logs.logger import setup_logger
 
 logger = setup_logger()
@@ -17,16 +17,22 @@ def add_client():
     return jsonify(response), status_code
 
 @client_bp.route("/clientes", methods=["GET"])
-def find_client_by_cpf():
-    cpf = request.args.get("cpf")
-    response, status_code = get_client_by_cpf(cpf)
-    logger.info(f"GET /clientes retornou {status_code} com a mensagem: {response}")
+def list_clients():
+    search = request.args.get("search")
+    response, status_code = get_all_clients(search)
+    logger.info(f"GET /clientes?search={search} retornou {status_code} com a mensagem: {response}")
     return jsonify(response), status_code
 
 @client_bp.route("/clientes/all", methods=["GET"])
 def list_all_clients():
     response, status_code = get_all_clients()
     logger.info(f"GET /clientes/all retornou {status_code} com a mensagem: {response}")
+    return jsonify(response), status_code
+
+@client_bp.route("/clientes/<int:client_id>", methods=["GET"])
+def find_client_by_id(client_id):
+    response, status_code = get_client_by_id(client_id)
+    logger.info(f"GET /clientes/<int:client_id> retornou {status_code} com a mensagem: {response}")
     return jsonify(response), status_code
 
 
