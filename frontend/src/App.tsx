@@ -20,6 +20,7 @@ import ProdutosAdd from "./pages/Produtos/add";
 {/* Clientes */ }
 import ClientesList from "./pages/Clientes";
 import ClientesAdd from "./pages/Clientes/add";
+import ClientesUpdate from "./pages/Clientes/update";
 
 export default function App() {
   return (
@@ -39,9 +40,11 @@ export default function App() {
           <Route path="/produtos" element={<ProdutosList />} />
           <Route path="/produtos/add" element={<ProdutosAdd />} />
 
+
           {/* Clientes */}
           <Route path="/clientes" element={<ClientesList />} />
           <Route path="/clientes/add" element={<ClientesAdd />} />
+          <Route path="/clientes/:id" element={<ClientesUpdate />} />
 
 
         </Route>

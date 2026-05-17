@@ -8,14 +8,20 @@ import {
   TableRow,
 } from "../ui/table";
 import { TrashBinIcon, PencilIcon } from "../../icons";
-import { useClientes } from "../../hooks/useClientes";
 import { ClienteAPI } from "../../types/cliente";
 import { Modal } from "../ui/modal";
 import Button from "../ui/button/Button";
 
-export default function TabelaClientes() {
+type Props = {
+  clientes: ClienteAPI[];
+  loading: boolean;
+  error: string | null;
+  deleteCliente: (id: number) => Promise<boolean>;
+};
+
+export default function TabelaClientes({ clientes, loading, error, deleteCliente }: Props) {
   const navigate = useNavigate();
-  const { clientes, loading, error, deleteCliente } = useClientes();
+
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedCliente, setSelectedCliente] = useState<ClienteAPI | null>(null);
@@ -24,6 +30,10 @@ export default function TabelaClientes() {
   function handleDeleteClick(cliente: ClienteAPI) {
     setSelectedCliente(cliente);
     setConfirmOpen(true);
+  }
+
+  function handleUpdateClick(cliente: ClienteAPI) {
+    navigate(`/clientes/${cliente.id}`);
   }
 
   async function handleConfirmDelete() {
@@ -109,34 +119,32 @@ export default function TabelaClientes() {
                   key={cliente.id}
                   className="divide-x divide-gray-200 dark:divide-gray-700"
                 >
-                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                  <TableCell className="px-2 py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
                     {cliente.id}
                   </TableCell>
 
-                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                  <TableCell className="px-2 py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
                     {cliente.nome}
                   </TableCell>
 
-                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                  <TableCell className="px-2 py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
                     {formatarTelefone(cliente.celular, true)}
                   </TableCell>
 
-                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                  <TableCell className="px-2 py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
                     {cliente.telefone
                       ? formatarTelefone(cliente.telefone, false)
                       : <span className="text-gray-300 dark:text-gray-600">—</span>}
                   </TableCell>
 
-                  <TableCell className="py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                  <TableCell className="px-2 py-4 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
                     {cliente.cidade} / {cliente.estado}
                   </TableCell>
 
-                  <TableCell className="py-3 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
+                  <TableCell className="px-2 py-3 text-center text-theme-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-600">
                     <div className="flex items-center justify-center gap-3">
                       <button
-                        onClick={() =>
-                          navigate(`/clientes/edit/${cliente.id}`)
-                        }
+                        onClick={() => handleUpdateClick(cliente)}
                         className="p-2 rounded-lg text-blue-500 hover:bg-brand-50 hover:text-blue-600 transition-colors duration-200"
                         title="Editar"
                       >

@@ -9,11 +9,54 @@ import Button from "../ui/button/Button";
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const user = {
+    username: "admin",
+    password: "admin123",
+  };
+
+  const [FormError, setFormError] = useState<{
+    username?: string;
+    password?: string;
+  }>({});
+
+  function validateForm() {
+
+    if (username.trim() === "") {
+      setFormError((prev) => ({ ...prev, username: "O campo de usuário é obrigatório." }));
+    } else {
+      setFormError((prev) => ({ ...prev, username: undefined }));
+    }
+    if (password.trim() === "") {
+      setFormError((prev) => ({ ...prev, password: "O campo de senha é obrigatório." }));
+    } else {
+      setFormError((prev) => ({ ...prev, password: undefined }));
+    }
+    if (user.username !== username) {
+      setFormError((prev) => ({ ...prev, username: "Usuário não encontrado." }));
+    } else {
+      setFormError((prev) => ({ ...prev, username: undefined }));
+    }
+    if (user.password !== password) {
+      setFormError((prev) => ({ ...prev, password: "Senha incorreta." }));
+    } else {
+      setFormError((prev) => ({ ...prev, password: undefined }));
+    }
+
+    if (user.username === username && user.password === password) {
+      setFormError({});
+      navigate("/Home");
+    }
+
+  }
+
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    navigate("/home");
+    validateForm();
   };
 
   return (
@@ -29,13 +72,21 @@ export default function SignInForm() {
             </p>
           </div>
           <div>
-            <form onSubmit={handleSubmit}> {/* ✅ adicionado */}
+            <form onSubmit={handleSubmit} noValidate>
               <div className="space-y-6">
                 <div>
                   <Label>
                     Usuário <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="Nome de usuário" />
+                  <Input
+                    placeholder="Nome de usuário"
+                    required={true}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className={FormError.username ? "border-error-500" : ""}
+                  />
+                  {FormError.username && (
+                    <p className="mt-1 text-sm text-error-500">{FormError.username}</p>
+                  )}
                 </div>
                 <div>
                   <Label>
@@ -45,6 +96,9 @@ export default function SignInForm() {
                     <Input
                       type={showPassword ? "text" : "password"}
                       placeholder="Insira sua senha"
+                      required={true}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className={FormError.password ? "border-error-500" : ""}
                     />
                     <span
                       onClick={() => setShowPassword(!showPassword)}
@@ -57,6 +111,9 @@ export default function SignInForm() {
                       )}
                     </span>
                   </div>
+                  {FormError.password && (
+                    <p className="mt-1 text-sm text-error-500">{FormError.password}</p>
+                  )}
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -73,7 +130,7 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm" type="submit">
+                  <Button className="w-full" size="sm" type="submit" onClick={validateForm}>
                     Entrar
                   </Button>
                 </div>
