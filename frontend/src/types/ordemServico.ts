@@ -51,4 +51,6 @@ export interface OrdemServico {
 
 export interface OrdemServicoAPI extends OrdemServico {
   id: number;
+  created_at: string;
+  updated_at: string;
 }

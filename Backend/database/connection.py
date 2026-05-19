@@ -112,6 +112,8 @@ def init_db() -> None:
     valorUnitario REAL NOT NULL,
     valorTotal REAL NOT NULL,
 
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
     FOREIGN KEY (osId)
         REFERENCES os(id)
         ON DELETE CASCADE,
@@ -127,7 +129,8 @@ def init_db() -> None:
         conn.execute(sql_clientes)
         conn.execute(sql_products)
         conn.execute(sql_veiculos)
-        conn.execute(sql_ordens_servicos)
+        conn.execute(sql_os)
+        conn.execute(sql_itens_os)
 
         conn.commit()
 
