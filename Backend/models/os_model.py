@@ -19,7 +19,7 @@ def insert_os(data: dict) -> int | None:
     """Insere uma nova OS e retorna o ID gerado."""
 
     sql = """
-        INSERT INTO os (
+        INSERT INTO ordens_servicos (
             clienteId,
             veiculoId,
 
@@ -82,7 +82,7 @@ def get_os_by_id(os_id: int) -> dict | None:
 
     sql = """
         SELECT *
-        FROM os
+        FROM ordens_servicos
         WHERE id = ?
         LIMIT 1
     """
@@ -117,7 +117,7 @@ def get_all_os(
 
     sql = """
         SELECT *
-        FROM os
+        FROM ordens_servicos
     """
 
     filtros = []
@@ -177,7 +177,7 @@ def update_os(os_id: int, data: dict) -> bool:
     )
 
     sql = f"""
-        UPDATE os
+        UPDATE ordens_servicos
         SET
             {set_clause},
             updated_at = CURRENT_TIMESTAMP
@@ -212,7 +212,7 @@ def delete_os(os_id: int) -> bool:
     """Remove uma OS."""
 
     sql = """
-        DELETE FROM os
+        DELETE FROM ordens_servicos
         WHERE id = ?
     """
 

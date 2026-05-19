@@ -4,6 +4,7 @@ from flask_cors import CORS
 from controller.client_controller import client_bp
 from controller.product_controller import product_bp
 from controller.vehicle_controller import vehicle_bp
+from controller.os_controller import os_bp
 
 from database.connection import init_db
 from logs.logger import setup_logger
@@ -22,6 +23,7 @@ init_db()
 app.register_blueprint(client_bp)
 app.register_blueprint(product_bp)
 app.register_blueprint(vehicle_bp)
+app.register_blueprint(os_bp)
 
 if __name__ == "__main__":
     app.run(debug=True)

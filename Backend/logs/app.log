@@ -622,3 +622,5 @@
 [2026-05-18 18:15:01] INFO - PUT /veiculos/1 retornou 404 com a mensagem: {'erro': 'veículo não encontrado'}
 [2026-05-18 18:15:06] INFO - PUT /veiculos/2 retornou 200 com a mensagem: {'mensagem': 'veículo atualizado com sucesso'}
 [2026-05-18 18:15:12] INFO - GET /veiculos/2 retornou 200 com a mensagem: {'id': 2, 'clienteId': 4, 'placa': 'ABC1D23', 'marca': 'Honda', 'modelo': 'Fit', 'ano': 2020, 'combustivel': 'Flex', 'quilometragem': None, 'created_at': '2026-05-18 21:14:03', 'updated_at': '2026-05-18 21:15:06'}
+[2026-05-19 18:06:12] INFO - GET /os retornou 200 com a mensagem: {'os': []}
+[2026-05-19 18:07:02] INFO - GET /clientes?search=None retornou 200 com a mensagem: {'clientes': []}

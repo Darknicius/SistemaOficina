@@ -70,7 +70,7 @@ def init_db() -> None:
         )
     """
 
-    sql_os = """
+    sql_ordens_servicos = """
         CREATE TABLE IF NOT EXISTS ordens_servicos (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -101,8 +101,8 @@ def init_db() -> None:
     )
     """
 
-    sql_itens_os = """
-    CREATE TABLE IF NOT EXISTS itens_os (
+    sql_itens_ordens_servicos = """
+    CREATE TABLE IF NOT EXISTS itens_ordens_servicos (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     osId INTEGER NOT NULL,
@@ -129,8 +129,8 @@ def init_db() -> None:
         conn.execute(sql_clientes)
         conn.execute(sql_products)
         conn.execute(sql_veiculos)
-        conn.execute(sql_os)
-        conn.execute(sql_itens_os)
+        conn.execute(sql_ordens_servicos)
+        conn.execute(sql_itens_ordens_servicos)
 
         conn.commit()
 
