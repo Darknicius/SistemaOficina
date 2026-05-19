@@ -51,11 +51,83 @@ def init_db() -> None:
         )
     """
 
+    sql_veiculos = """
+        CREATE TABLE IF NOT EXISTS veiculos (
+        id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+        clienteId           INTEGER,
+        placa               TEXT UNIQUE NOT NULL,
+        marca               TEXT,
+        modelo              TEXT    NOT NULL,
+        ano                 INTEGER    NOT NULL,
+        combustivel         TEXT,
+        quilometragem       INTEGER,
+        created_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at          DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY (clienteId)
+        REFERENCES clientes(id)
+        ON DELETE CASCADE
+        )
+    """
+
+    sql_os = """
+        CREATE TABLE IF NOT EXISTS ordens_servicos (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        clienteId INTEGER NOT NULL,
+        veiculoId INTEGER NOT NULL,
+
+        status TEXT NOT NULL,
+
+        diagnostico TEXT,
+        descricaoServico TEXT,
+        observacoes TEXT,
+
+        valorProdutos REAL DEFAULT 0,
+        valorServico REAL DEFAULT 0,
+        valorTotal REAL DEFAULT 0,
+
+        dataAbertura DATETIME DEFAULT CURRENT_TIMESTAMP,
+        dataFinalizacao DATETIME,
+
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY (clienteId)
+            REFERENCES clientes(id),
+
+        FOREIGN KEY (veiculoId)
+            REFERENCES veiculos(id)
+    )
+    """
+
+    sql_itens_os = """
+    CREATE TABLE IF NOT EXISTS itens_os (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    osId INTEGER NOT NULL,
+    produtoId INTEGER NOT NULL,
+
+    quantidade INTEGER NOT NULL,
+    valorUnitario REAL NOT NULL,
+    valorTotal REAL NOT NULL,
+
+    FOREIGN KEY (osId)
+        REFERENCES os(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (produtoId)
+        REFERENCES produtos(id)
+    )
+    """
+
     conn = get_connection()
 
     try:
         conn.execute(sql_clientes)
         conn.execute(sql_products)
+        conn.execute(sql_veiculos)
+        conn.execute(sql_ordens_servicos)
 
         conn.commit()
 
