@@ -22,6 +22,9 @@ import ClientesList from "./pages/Clientes";
 import ClientesAdd from "./pages/Clientes/add";
 import ClientesUpdate from "./pages/Clientes/update";
 
+{/* Ordem serviço */ }
+import OSList from "./pages/OrdensServicos";
+
 export default function App() {
   return (
     <Router>
@@ -45,6 +48,9 @@ export default function App() {
           <Route path="/clientes" element={<ClientesList />} />
           <Route path="/clientes/add" element={<ClientesAdd />} />
           <Route path="/clientes/:id" element={<ClientesUpdate />} />
+
+          {/* Ordem Serviço */}
+          <Route path="/ordemServicos" element={<OSList />} />
 
 
         </Route>
